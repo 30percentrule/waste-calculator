@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waste Calculator | Thirty Percent</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: #FFFFFF;
+            padding: 0;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: #FFFFFF;
+            color: #000000;
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 3px solid #000000;
+        }
+        
+        h1 {
+            color: #000000;
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+        
+        .subtitle {
+            color: #000000;
+            opacity: 0.7;
+            font-size: 18px;
+            font-weight: 400;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .category-section {
+            margin-bottom: 30px;
+            border: 2px solid #000000;
+            border-radius: 0;
+            overflow: hidden;
+            background: #FFFFFF;
+        }
+        
+        .category-header {
+            background: #000000;
+            color: #FFFFFF;
+            padding: 20px 30px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            font-size: 24px;
+            letter-spacing: -0.5px;
+            transition: background 0.2s;
+        }
+        
+        .category-header:hover {
+            background: #1a1a1a;
+        }
+        
+        .category-total {
+            font-size: 28px;
+            font-weight: 700;
+            color: #FF5900;
+        }
+        
+        .category-content {
+            padding: 30px;
+            background: #FFFFFF;
+        }
+        
+        .category-content.collapsed {
+            display: none;
+        }
+        
+        .item-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 60px;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 25px 20px;
+            background: #FFFFFF;
+            border: 2px solid #000000;
+            align-items: center;
+        }
+        
+        .item-row.header {
+            background: #000000;
+            color: #FFFFFF;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+            border: 2px solid #000000;
+        }
+        
+        .field-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        label {
+            font-size: 12px;
+            color: #000000;
+            margin-bottom: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        input {
+            padding: 12px;
+            border: 2px solid #000000;
+            border-radius: 0;
+            font-size: 16px;
+            width: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #FF5900;
+            box-shadow: 0 0 0 3px rgba(255, 89, 0, 0.1);
+        }
+        
+        input[readonly] {
+            background: #f5f5f5;
+            cursor: not-allowed;
+            color: #000000;
+            font-weight: 700;
+            border-color: #000000;
+        }
+        
+        .calculated {
+            color: #FF5900;
+        }
+        
+        .btn-remove {
+            background: #000000;
+            color: #FFFFFF;
+            border: 2px solid #000000;
+            padding: 12px;
+            border-radius: 0;
+            cursor: pointer;
+            font-size: 20px;
+            width: 50px;
+            height: 50px;
+            font-weight: 700;
+            transition: all 0.2s;
+        }
+        
+        .btn-remove:hover {
+            background: #FF5900;
+            border-color: #FF5900;
+        }
+        
+        .btn-add {
+            background: #000000;
+            color: #FFFFFF;
+            border: 2px solid #000000;
+            padding: 15px 30px;
+            border-radius: 0;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 700;
+            margin-top: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+        }
+        
+        .btn-add:hover {
+            background: #FF5900;
+            border-color: #FF5900;
+        }
+        
+        .summary-dashboard {
+            background: #000000;
+            color: #FFFFFF;
+            padding: 50px;
+            border-radius: 0;
+            margin-top: 50px;
+            border: 3px solid #000000;
+        }
+        
+        .summary-dashboard h2 {
+            margin-bottom: 30px;
+            font-size: 36px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 20px;
+        }
+        
+        .summary-item {
+            background: #FFFFFF;
+            color: #000000;
+            padding: 30px 20px;
+            border: 2px solid #000000;
+            text-align: center;
+        }
+        
+        .summary-label {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .summary-value {
+            font-size: 42px;
+            font-weight: 700;
+            color: #000000;
+            letter-spacing: -1px;
+        }
+        
+        .grand-total {
+            grid-column: 1 / -1;
+            background: #FF5900;
+            color: #FFFFFF;
+            padding: 40px;
+            text-align: center;
+            border: 3px solid #FF5900;
+        }
+        
+        .grand-total .summary-label {
+            font-size: 20px;
+            color: #FFFFFF;
+            letter-spacing: 2px;
+        }
+        
+        .grand-total .summary-value {
+            font-size: 56px;
+            color: #FFFFFF;
+            margin-top: 10px;
+        }
+        
+        .btn-export {
+            background: #FF5900;
+            color: #FFFFFF;
+            border: 3px solid #FF5900;
+            padding: 18px 40px;
+            border-radius: 0;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 700;
+            margin-top: 30px;
+            width: 100%;
+            max-width: 400px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            transition: all 0.2s;
+        }
+        
+        .btn-export:hover {
+            background: #FFFFFF;
+            color: #FF5900;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 32px;
+            }
+            
+            .category-header {
+                font-size: 18px;
+                padding: 15px 20px;
+            }
+            
+            .category-total {
+                font-size: 20px;
+            }
+            
+            .item-row {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            input {
+                font-size: 16px;
+            }
+            
+            .summary-dashboard {
+                padding: 30px 20px;
+            }
+            
+            .summary-dashboard h2 {
+                font-size: 24px;
+            }
+            
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .grand-total .summary-value {
+                font-size: 40px;
+            }
+        }
+        
+        @media print {
+            body {
+                background: white;
+            }
+            
+            .btn-add, .btn-remove, .btn-export {
+                display: none;
+            }
+            
+            .category-content {
+                display: block !important;
+            }
+            
+            .header {
+                background: white;
+                color: black;
+                border-bottom: 3px solid black;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Waste Calculator</h1>
+        <p class="subtitle">Calculate the true cost of kitchen waste: product + labor</p>
+    </div>
+    
+    <div class="container">
+        <div id="categories"></div>
+        
+        <div class="summary-dashboard">
+            <h2>Waste Summary</h2>
+            <div class="summary-grid" id="summary"></div>
+        </div>
+        
+        <button class="btn-export" onclick="exportToExcel()">Export to Excel</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        const categories = ['Produce', 'Protein', 'Dairy', 'Dry Goods', 'Bar', 'Other'];
+        let itemIdCounter = 0;
+        let items = {};
+
+        function init() {
+            const container = document.getElementById('categories');
+            
+            categories.forEach(category => {
+                const section = document.createElement('div');
+                section.className = 'category-section';
+                section.innerHTML = `
+                    <div class="category-header" onclick="toggleCategory('${category}')">
+                        <span>${category}</span>
+                        <span class="category-total" id="total-${category}">$0.00</span>
+                    </div>
+                    <div class="category-content" id="content-${category}">
+                        <div class="item-row header" id="header-${category}" style="display: none;">
+                            <div>Item Name</div>
+                            <div>Qty Wasted</div>
+                            <div>Cost/Unit</div>
+                            <div>Product $</div>
+                            <div>Prep Min/Unit</div>
+                            <div>Wage $/hr</div>
+                            <div>Labor $</div>
+                            <div>Total $</div>
+                            <div></div>
+                        </div>
+                        <div id="items-${category}"></div>
+                        <button class="btn-add" onclick="addItem('${category}')">+ Add Item</button>
+                    </div>
+                `;
+                container.appendChild(section);
+            });
+            
+            updateSummary();
+        }
+
+        function toggleCategory(category) {
+            const content = document.getElementById(`content-${category}`);
+            content.classList.toggle('collapsed');
+        }
+
+        function addItem(category) {
+            const itemId = `item-${itemIdCounter++}`;
+            items[itemId] = {
+                category: category,
+                name: '',
+                quantity: 0,
+                costPerUnit: 0,
+                prepTime: 0,
+                wage: 18,
+                productWaste: 0,
+                laborWaste: 0,
+                totalWaste: 0
+            };
+            
+            // Show the header when first item is added
+            const header = document.getElementById(`header-${category}`);
+            if (header) {
+                header.style.display = 'grid';
+            }
+            
+            const container = document.getElementById(`items-${category}`);
+            const row = document.createElement('div');
+            row.className = 'item-row';
+            row.id = itemId;
+            row.innerHTML = `
+                <div class="field-group">
+                    <label>Item Name</label>
+                    <input type="text" placeholder="e.g., Tomatoes" onchange="updateItem('${itemId}', 'name', this.value)">
+                </div>
+                <div class="field-group">
+                    <label>Qty Wasted</label>
+                    <input type="number" step="0.01" min="0" value="0" oninput="updateItem('${itemId}', 'quantity', this.value)">
+                </div>
+                <div class="field-group">
+                    <label>Cost/Unit ($)</label>
+                    <input type="number" step="0.01" min="0" value="0" oninput="updateItem('${itemId}', 'costPerUnit', this.value)">
+                </div>
+                <div class="field-group">
+                    <label>Product Waste</label>
+                    <input type="text" readonly class="calculated" id="${itemId}-product" value="$0.00">
+                </div>
+                <div class="field-group">
+                    <label>Prep Min/Unit</label>
+                    <input type="number" step="0.1" min="0" value="0" oninput="updateItem('${itemId}', 'prepTime', this.value)">
+                </div>
+                <div class="field-group">
+                    <label>Wage ($/hr)</label>
+                    <input type="number" step="0.01" min="0" value="18" oninput="updateItem('${itemId}', 'wage', this.value)">
+                </div>
+                <div class="field-group">
+                    <label>Labor Waste</label>
+                    <input type="text" readonly class="calculated" id="${itemId}-labor" value="$0.00">
+                </div>
+                <div class="field-group">
+                    <label>Total Waste</label>
+                    <input type="text" readonly class="calculated" id="${itemId}-total" value="$0.00">
+                </div>
+                <button class="btn-remove" onclick="removeItem('${itemId}')" title="Remove item">×</button>
+            `;
+            container.appendChild(row);
+        }
+
+        function updateItem(itemId, field, value) {
+            if (!items[itemId]) return;
+            
+            items[itemId][field] = field === 'name' ? value : parseFloat(value) || 0;
+            
+            items[itemId].productWaste = items[itemId].quantity * items[itemId].costPerUnit;
+            items[itemId].laborWaste = (items[itemId].prepTime / 60) * items[itemId].wage * items[itemId].quantity;
+            items[itemId].totalWaste = items[itemId].productWaste + items[itemId].laborWaste;
+            
+            document.getElementById(`${itemId}-product`).value = `$${items[itemId].productWaste.toFixed(2)}`;
+            document.getElementById(`${itemId}-labor`).value = `$${items[itemId].laborWaste.toFixed(2)}`;
+            document.getElementById(`${itemId}-total`).value = `$${items[itemId].totalWaste.toFixed(2)}`;
+            
+            updateSummary();
+        }
+
+        function removeItem(itemId) {
+            const item = items[itemId];
+            if (!item) return;
+            
+            const category = item.category;
+            delete items[itemId];
+            document.getElementById(itemId).remove();
+            
+            // Hide header if no items remain in this category
+            const categoryItems = Object.values(items).filter(i => i.category === category);
+            if (categoryItems.length === 0) {
+                const header = document.getElementById(`header-${category}`);
+                if (header) {
+                    header.style.display = 'none';
+                }
+            }
+            
+            updateSummary();
+        }
+
+        function updateSummary() {
+            const totals = {};
+            let grandTotal = 0;
+            
+            categories.forEach(cat => {
+                totals[cat] = 0;
+            });
+            
+            Object.values(items).forEach(item => {
+                totals[item.category] += item.totalWaste;
+                grandTotal += item.totalWaste;
+            });
+            
+            categories.forEach(cat => {
+                document.getElementById(`total-${cat}`).textContent = `$${totals[cat].toFixed(2)}`;
+            });
+            
+            const summaryContainer = document.getElementById('summary');
+            summaryContainer.innerHTML = categories.map(cat => `
+                <div class="summary-item">
+                    <div class="summary-label">${cat} Waste</div>
+                    <div class="summary-value">$${totals[cat].toFixed(2)}</div>
+                </div>
+            `).join('') + `
+                <div class="summary-item grand-total">
+                    <div class="summary-label">GRAND TOTAL WASTE</div>
+                    <div class="summary-value">$${grandTotal.toFixed(2)}</div>
+                </div>
+            `;
+        }
+
+        function exportToExcel() {
+            if (typeof XLSX === 'undefined') {
+                alert('Excel export library is still loading. Please try again in a moment.');
+                return;
+            }
+            
+            const wb = XLSX.utils.book_new();
+            const ws = {};
+            let rowNum = 1;
+            
+            // Title
+            ws['A1'] = { v: 'Thirty Percent - Restaurant Waste Calculator', t: 's' };
+            ws['A2'] = { v: 'Generated: ' + new Date().toLocaleString(), t: 's' };
+            rowNum = 4;
+            
+            // Calculate totals
+            const totals = {};
+            let grandTotal = 0;
+            categories.forEach(cat => { totals[cat] = 0; });
+            Object.values(items).forEach(item => {
+                totals[item.category] += item.totalWaste;
+                grandTotal += item.totalWaste;
+            });
+            
+            // Summary
+            ws[`A${rowNum}`] = { v: 'SUMMARY BY CATEGORY', t: 's' };
+            rowNum++;
+            categories.forEach(cat => {
+                ws[`A${rowNum}`] = { v: cat + ' Total Waste', t: 's' };
+                ws[`B${rowNum}`] = { v: totals[cat], t: 'n', z: '"$"#,##0.00' };
+                rowNum++;
+            });
+            rowNum++;
+            ws[`A${rowNum}`] = { v: 'GRAND TOTAL WASTE', t: 's' };
+            ws[`B${rowNum}`] = { v: grandTotal, t: 'n', z: '"$"#,##0.00' };
+            rowNum += 3;
+            
+            // Detailed items by category
+            categories.forEach(cat => {
+                const categoryItems = Object.values(items).filter(item => item.category === cat);
+                
+                if (categoryItems.length > 0) {
+                    ws[`A${rowNum}`] = { v: cat.toUpperCase(), t: 's' };
+                    rowNum++;
+                    
+                    // Headers
+                    ws[`A${rowNum}`] = { v: 'Item Name', t: 's' };
+                    ws[`B${rowNum}`] = { v: 'Qty Wasted', t: 's' };
+                    ws[`C${rowNum}`] = { v: 'Cost/Unit ($)', t: 's' };
+                    ws[`D${rowNum}`] = { v: 'Product Waste ($)', t: 's' };
+                    ws[`E${rowNum}`] = { v: 'Prep Min/Unit', t: 's' };
+                    ws[`F${rowNum}`] = { v: 'Wage ($/hr)', t: 's' };
+                    ws[`G${rowNum}`] = { v: 'Labor Waste ($)', t: 's' };
+                    ws[`H${rowNum}`] = { v: 'Total Waste ($)', t: 's' };
+                    rowNum++;
+                    
+                    // Data rows with formulas
+                    categoryItems.forEach(item => {
+                        ws[`A${rowNum}`] = { v: item.name || '(unnamed)', t: 's' };
+                        ws[`B${rowNum}`] = { v: item.quantity, t: 'n' };
+                        ws[`C${rowNum}`] = { v: item.costPerUnit, t: 'n', z: '"$"#,##0.00' };
+                        ws[`D${rowNum}`] = { f: `B${rowNum}*C${rowNum}`, t: 'n', z: '"$"#,##0.00' };
+                        ws[`E${rowNum}`] = { v: item.prepTime, t: 'n' };
+                        ws[`F${rowNum}`] = { v: item.wage, t: 'n', z: '"$"#,##0.00' };
+                        ws[`G${rowNum}`] = { f: `(E${rowNum}/60)*F${rowNum}*B${rowNum}`, t: 'n', z: '"$"#,##0.00' };
+                        ws[`H${rowNum}`] = { f: `D${rowNum}+G${rowNum}`, t: 'n', z: '"$"#,##0.00' };
+                        rowNum++;
+                    });
+                    
+                    rowNum++;
+                }
+            });
+            
+            // Set range
+            ws['!ref'] = `A1:H${rowNum}`;
+            
+            // Column widths
+            ws['!cols'] = [
+                { wch: 25 }, { wch: 12 }, { wch: 14 }, { wch: 16 },
+                { wch: 15 }, { wch: 14 }, { wch: 16 }, { wch: 16 }
+            ];
+            
+            XLSX.utils.book_append_sheet(wb, ws, 'Waste Report');
+            XLSX.writeFile(wb, `ThirtyPercent_Waste_Report_${new Date().toISOString().split('T')[0]}.xlsx`);
+        }
+
+        init();
+    </script>
+</body>
+</html>
